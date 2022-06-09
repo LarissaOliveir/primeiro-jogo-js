@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        html {
+          font-family: sans-serif;
+        }
+        body {
+          width: 50%;
+          max-width: 800px;
+          min-width: 480px;
+          margin: 0 auto;
+        }
+        .ultimoResultado {
+          color: white;
+          padding: 3px;
+        }
+      </style>
+
+    <title> Jogo - Advinhe o numero </title>
+</head>
+<body>
+
+    <!-- inserir valores nos paragrados
+         armazenam referencias para o campo texto e botao
+    -->
+    <p class="palpites"></p>
+    <p class="ultimoResultado"></p>
+    <p class="baixoOuAlto"></p>
+
+    <label for="campoPalpite">Digite seu palpite: </label>
+    <input type="text" id="campoPalpite" class="campoPalpite">
+    <input type="submit" value="Enviar palpite" class="envioPalpite">
+
+</body>
+</html>
+
+
+<script>
+   // primeiro jogo em javascript - treino
+
+   /* 
+        Titulo - Advinhe um número
+        Subtitulo - Selecionamos um número aleatório entre 1 e 100. 
+        Veja se consegue advinhar em 10 chances ou menos. Nós lhe diremos
+        se seu palpite está com valor alto ou baixo.
+
+        p - digite seu palpite:
+        botoao - enviar palpite
+
+   */
+
+   /*
+        O que fazer?
+
+        1. Gerar um numero aleatório de 1  100
+
+        2. Gravar o numero do turno que o jogador esta. 
+        Iniciar em 1.
+
+        3. Dar ao jogador uma forma de advinhar o numero
+
+        4. Apois a tentativa ter sido submetida, primeiro gravar em algum 
+        lugar para que o usuario possar ver as tentativas  anteriores
+
+        5. depois, verificar se o paplite esta certo. 
+
+        6. se estiver certo:
+          Escrever mensagem de parabéns.
+          Impedir que o jogador insira mais respostas (isso pode bugar o jogo).
+          Mostrar controle que permita ao jogador reiniciar o jogo.
+
+        7. Se o palpite estiver errado e o jogador ainda tem turnos sobrando:
+          Dizer ao jogador que ele está errado.
+          Permitir que ele insira outra resposta.
+          Incrementar o número do turno em 1.
+
+        8. Se o jogador está errado mas não tem turnos sobrando:
+         Dizer ao jogador que o jogo acabou.
+         Impedir que o jogador insira mais respostas (isso pode bugar o jogo).
+         Mostrar controle que permita ao jogador reiniciar o jogo.
+
+        9. Quando reiniciar, tenha certeza de resetar todas as variáveis e a
+        interface do jogo, então volte para o passo 1.
+   */
+
+   //setando variaveis para guardar os dados.
+   //variavel para receber o numero aleatorio que o jogo vai escolher
+    var numeroAleatorio = Math.floor(Math.random() * 100) + 1;
+
+    //variavel para receber os palpites
+    var palpites = document.querySelector('.palpites');
+
+    //variavel do ultimo resultado dos palpites
+    var ultimoResultado = document.querySelector('.ultimoResultado');
+
+    //variavel do numero baixo - alto
+    var baixoOuAlto = document.querySelector('.baixoOuAlto');
+
+    //variaveis para guardar os numeros dos paplpites
+    var envioPalpite = document.querySelector('.envioPalpite');
+    var campoPalpite = document.querySelector('.campoPalpite');
+
+    //variavel para a contagem dos palpites comecando
+    // (recebendo ja o valor) 1
+    var contagemPalpites = 1;
+    var botaoReinicio;
+    campoPalpite.focus();
+
+    //funcoes
+    function conferirPalpite() {
+        var palpiteUsuario = Number(campoPalpite.value);
+        if (contagemPalpites === 1) {
+            palpites.textContent = 'Palpites anteriores: ';
+        }
+        palpites.textContent += palpiteUsuario + ' ';
+
+    if (palpiteUsuario === numeroAleatorio) {
+        ultimoResultado.textContent = 'Parabéns! Você acertou!';
+        ultimoResultado.style.backgroundColor = 'green';
+        baixoOuAlto.textContent = '';
+        configFimDeJogo();
+        } else if (contagemPalpites === 10) {
+        ultimoResultado.textContent = '!!!FIM DE JOGO!!!';
+        baixoOuAlto.textContent = '';
+        configFimDeJogo();
+        } else {
+        ultimoResultado.textContent = 'Errado!';
+        ultimoResultado.style.backgroundColor = 'red';
+        if(palpiteUsuario < numeroAleatorio) {
+            baixoOuAlto.textContent = 'Seu palpite está muito baixo!';
+        } else if(palpiteUsuario > numeroAleatorio) {
+            baixoOuAlto.textContent = 'Seu palpite está muito alto!';
+        }
+    }
+
+    contagemPalpites++;
+    campoPalpite.value = '';
+    campoPalpite.focus();
+    }
+
+    envioPalpite.addEventListener('click', conferirPalpite);
+
+    function configFimDeJogo() {
+    campoPalpite.disabled = true;
+    envioPalpite.disabled = true;
+    botaoReinicio = document.createElement('button');
+    botaoReinicio.textContent = 'Iniciar novo jogo';
+    document.body.appendChild(botaoReinicio);
+    botaoReinicio.addEventListener('click', reiniciarJogo);
+    }
+
+    function reiniciarJogo() {
+    contagemPalpites = 1;
+
+    var reiniciarParas = document.querySelectorAll('.resultadoParas p');
+    for (var i = 0 ; i < reiniciarParas.length ; i++) {
+    reiniciarParas[i].textContent = '';
+    }
+
+    botaoReinicio.parentNode.removeChild(botaoReinicio);
+
+    campoPalpite.disabled = false;
+    envioPalpite.disabled = false;
+    campoPalpite.value = '';
+    campoPalpite.focus();
+
+    ultimoResultado.style.backgroundColor = 'white';
+
+    numeroAleatorio = Math.floor(Math.random() * 100) + 1;
+    }
+
+</script>
